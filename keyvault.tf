@@ -11,6 +11,7 @@ resource "azurerm_key_vault" "lab" {
 
 resource "azurerm_key_vault_secret" "lab" {
   name         = "Lab-Test-Secret"
-  value        = "TerraformTest123"
+  value        = var.lab_secret
   key_vault_id = azurerm_key_vault.lab.id
+  tags         = var.common_tags
 }
