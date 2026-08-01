@@ -26,4 +26,12 @@ variable "lab_secret" {
   description = "Test secret stored in Azure Key Vault"
   type        = string
   sensitive   = true
+
+
+}
+
+variable "create_backup_storage" {
+  description = "Create an additional backup storage account"
+  type        = bool
+  default     = false
 }

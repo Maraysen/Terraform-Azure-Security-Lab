@@ -7,6 +7,14 @@ resource "azurerm_key_vault" "lab" {
   rbac_authorization_enabled = true
   soft_delete_retention_days = 7
   purge_protection_enabled   = false
+
+  lifecycle {
+    prevent_destroy = true
+
+    ignore_changes = [
+      tags
+    ]
+  }
 }
 
 resource "azurerm_key_vault_secret" "lab" {

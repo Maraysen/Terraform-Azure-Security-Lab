@@ -105,11 +105,97 @@ RequestDisallowedByPolicy
 - Resource references and dependencies
 - `for_each`
 - Dynamic blocks
+- `count`
+- Conditional expressions
 - Managed identities
 - Azure RBAC
 - Diagnostic settings
 - Azure Policy
-- Terraform state protection
+- Remote Terraform state
+- State locking
+- Reusable modules
+- Terraform import
+- Lifecycle rules
+
+## Remote State
+
+Terraform state is stored in a private Azure Storage container using Microsoft Entra authentication.
+
+The backend uses:
+
+- A separate resource group for Terraform state
+- A private Azure Storage account
+- A blob container named `tfstate`
+- Azure Blob state locking
+- Microsoft Entra authentication instead of storage account keys
+
+The active state file is stored as:
+
+```text
+tfstate/azure-security-lab.tfstate
+```
+
+## Reusable Network Module
+
+The networking resources were moved into:
+
+```text
+modules/network/
+```
+
+The module creates:
+
+- Virtual network
+- Subnet
+- Network Security Group
+- Subnet and NSG association
+
+Existing Azure resources were preserved by moving their Terraform state addresses with:
+
+```powershell
+terraform state mv
+```
+
+This allowed the resources to move into the module without being destroyed or recreated.
+
+## Terraform Import
+
+A resource group created outside Terraform was imported into Terraform state.
+
+```powershell
+terraform import
+```
+
+This demonstrated how Terraform can take ownership of an existing Azure resource without recreating it.
+
+## Lifecycle Protection
+
+The Key Vault uses lifecycle protection:
+
+```hcl
+lifecycle {
+  prevent_destroy = true
+
+  ignore_changes = [
+    tags
+  ]
+}
+```
+
+- `prevent_destroy` protects the Key Vault from accidental destruction through Terraform.
+- `ignore_changes` prevents Terraform from reversing tag changes managed outside Terraform.
+
+## Conditional Resources
+
+An optional backup storage account demonstrates `count` and conditional expressions:
+
+```hcl
+count = var.create_backup_storage ? 1 : 0
+```
+
+When the variable is `true`, Terraform creates one backup storage account.
+
+When the variable is `false`, Terraform creates zero backup storage accounts.
 
 ## Terraform Workflow
 
@@ -125,9 +211,12 @@ terraform apply
 
 ```text
 .
+├── backend.tf
 ├── diagnostics.tf
+├── import-demo.tf
 ├── keyvault.tf
 ├── monitoring.tf
+├── network-module.tf
 ├── network.tf
 ├── outputs.tf
 ├── policy.tf
@@ -137,6 +226,11 @@ terraform apply
 ├── storage.tf
 ├── variables.tf
 ├── webapp.tf
+├── modules/
+│   └── network/
+│       ├── main.tf
+│       ├── variables.tf
+│       └── outputs.tf
 ├── .gitignore
 └── README.md
 ```
@@ -158,9 +252,8 @@ Terraform state may contain sensitive infrastructure information and must not be
 
 ## Future Improvements
 
-- Move Terraform state to Azure Storage
-- Enable remote state locking
-- Refactor resources into reusable modules
-- Demonstrate importing existing resources
-- Add lifecycle rules
-- Add automated validation with GitHub Actions
+- Add automated Terraform validation with GitHub Actions
+- Add multiple environment configurations for development and production
+- Add private endpoints for Key Vault and Storage
+- Add Azure Firewall or Web Application Firewall
+- Add security scanning with tools such as Checkov or Trivy
