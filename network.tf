@@ -1,6 +1,7 @@
 resource "azurerm_resource_group" "lab" {
-  name     = "rg-terraform-security-lab"
-  location = "Australia East"
+  name     = var.resource_group_name
+  location = var.location
+  tags     = var.common_tags
 }
 
 resource "azurerm_virtual_network" "lab" {
@@ -8,6 +9,7 @@ resource "azurerm_virtual_network" "lab" {
   location            = azurerm_resource_group.lab.location
   resource_group_name = azurerm_resource_group.lab.name
   address_space       = ["10.20.0.0/16"]
+  tags                = var.common_tags
 }
 
 resource "azurerm_subnet" "lab" {
@@ -21,6 +23,7 @@ resource "azurerm_network_security_group" "lab" {
   name                = "nsg-terraform-security-lab"
   location            = azurerm_resource_group.lab.location
   resource_group_name = azurerm_resource_group.lab.name
+  tags                = var.common_tags
 
   security_rule {
     name                       = "Allow-HTTPS-Inbound"

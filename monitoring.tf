@@ -4,6 +4,7 @@ resource "azurerm_log_analytics_workspace" "lab" {
   resource_group_name = azurerm_resource_group.lab.name
   sku                 = "PerGB2018"
   retention_in_days   = 30
+  tags                = var.common_tags
 }
 
 resource "azurerm_monitor_diagnostic_setting" "key_vault" {

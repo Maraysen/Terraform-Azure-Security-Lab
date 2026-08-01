@@ -14,6 +14,7 @@ variable "common_tags" {
   description = "Standard tags applied to supported resources"
   type        = map(string)
 
+
   default = {
     Environment = "Lab"
     Project     = "Terraform-Azure-Security"

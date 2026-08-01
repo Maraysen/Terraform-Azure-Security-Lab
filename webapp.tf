@@ -4,6 +4,7 @@ resource "azurerm_service_plan" "lab" {
   resource_group_name = azurerm_resource_group.lab.name
   os_type             = "Linux"
   sku_name            = "F1"
+  tags                = var.common_tags
 }
 
 resource "azurerm_linux_web_app" "lab" {
@@ -11,6 +12,7 @@ resource "azurerm_linux_web_app" "lab" {
   location            = azurerm_resource_group.lab.location
   resource_group_name = azurerm_resource_group.lab.name
   service_plan_id     = azurerm_service_plan.lab.id
+  tags                = var.common_tags
 
   identity {
     type = "SystemAssigned"
