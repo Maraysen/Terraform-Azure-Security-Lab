@@ -33,5 +33,5 @@ variable "lab_secret" {
 variable "create_backup_storage" {
   description = "Create an additional backup storage account"
   type        = bool
-  default     = false
+  default     = true
 }
