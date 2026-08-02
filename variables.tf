@@ -11,7 +11,7 @@ variable "resource_group_name" {
 }
 
 variable "common_tags" {
-  description = "Standard tags applied to supported resources"
+  description = "Standard tags applied to Azure lab resources"
   type        = map(string)
 
 
