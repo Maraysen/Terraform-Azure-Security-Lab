@@ -1,0 +1,17 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: TerraformInstaller@1
+  displayName: 'Install Terraform'
+  inputs:
+    terraformVersion: '1.15.8'
+
+- script: terraform version
+  displayName: 'Check Terraform version'
+
+- script: terraform fmt -check -recursive
+  displayName: 'Check Terraform formatting'
