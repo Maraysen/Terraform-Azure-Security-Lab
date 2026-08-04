@@ -16,7 +16,7 @@ steps:
 - script: terraform fmt -check -recursive
   displayName: 'Check Terraform formatting'
 
-  - script: terraform init -backend=false
+- script: terraform init -backend=false
   displayName: 'Terraform Init Without Backend'
 
 - script: terraform validate
