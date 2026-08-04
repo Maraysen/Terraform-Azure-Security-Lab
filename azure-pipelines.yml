@@ -30,10 +30,11 @@ steps:
       export ARM_CLIENT_ID="$servicePrincipalId"
       export ARM_TENANT_ID="$tenantId"
       export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
+      export ARM_OIDC_TOKEN="$idToken"
       export ARM_USE_OIDC=true
       export ARM_USE_AZUREAD=true
-      
-      terraform init
+
+      terraform init -reconfigure
 
 - script: terraform validate
   displayName: 'Terraform Validate'
