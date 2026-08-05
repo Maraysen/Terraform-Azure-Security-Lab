@@ -2,7 +2,9 @@ trigger:
 - main
 
 variables:
-  serviceConnection: 'sc-azure-security-lab'
+- group: terraform-secrets
+- name: serviceConnection
+  value: 'sc-azure-security-lab'
 
 stages:
 - stage: Plan
@@ -64,7 +66,7 @@ stages:
 
           terraform plan -input=false -out=tfplan
       env:
-        TF_VAR_lab_secret: 'TemporaryLabSecret123!'
+        TF_VAR_lab_secret: '$(lab_secret)'
 
     - task: PublishPipelineArtifact@1
       displayName: 'Publish Terraform Plan'
@@ -122,4 +124,4 @@ stages:
                 terraform init -reconfigure
                 terraform apply -input=false "$(Pipeline.Workspace)/terraform-plan/tfplan"
             env:
-              TF_VAR_lab_secret: 'TemporaryLabSecret123!'
+              TF_VAR_lab_secret: '$(lab_secret)'
