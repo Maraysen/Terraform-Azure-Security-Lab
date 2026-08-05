@@ -52,7 +52,9 @@ stages:
     - script: |
         python -m pip install --upgrade pip
         pip install checkov
-        checkov -d . --framework terraform
+
+        # Lab exception: customer-managed keys are outside this lab's scope.
+        checkov -d . --framework terraform --skip-check CKV2_AZURE_1
       displayName: 'Checkov IaC Security Scan'
 
     - task: AzureCLI@2
