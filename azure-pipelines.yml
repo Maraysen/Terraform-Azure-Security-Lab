@@ -76,7 +76,7 @@ stages:
 - stage: Apply
   displayName: 'Terraform Apply'
   dependsOn: Plan
-  condition: succeeded()
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
 
   jobs:
   - deployment: Apply
