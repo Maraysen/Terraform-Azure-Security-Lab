@@ -1,4 +1,5 @@
 resource "azurerm_storage_account" "lab" {
+  # checkov:skip=CKV2_AZURE_33:Private endpoints are outside the current lab scope; storage hardening is handled with TLS, disabled public blobs, disabled shared keys and SAS expiry.
   name                     = "sttfsecuritymk26"
   resource_group_name      = azurerm_resource_group.lab.name
   location                 = azurerm_resource_group.lab.location
@@ -22,6 +23,7 @@ resource "azurerm_storage_account" "lab" {
 }
 
 resource "azurerm_storage_account" "backup" {
+  # checkov:skip=CKV2_AZURE_33:Private endpoints are outside the current lab scope; storage hardening is handled with TLS, disabled public blobs, disabled shared keys and SAS expiry.
   count = var.create_backup_storage ? 1 : 0
 
   name                     = "stbackupmk26"
