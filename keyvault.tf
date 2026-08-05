@@ -6,7 +6,7 @@ resource "azurerm_key_vault" "lab" {
   sku_name                   = "standard"
   rbac_authorization_enabled = true
   soft_delete_retention_days = 7
-  purge_protection_enabled   = false
+  purge_protection_enabled   = true
 
   lifecycle {
     prevent_destroy = true
@@ -18,8 +18,10 @@ resource "azurerm_key_vault" "lab" {
 }
 
 resource "azurerm_key_vault_secret" "lab" {
-  name         = "Lab-Test-Secret"
-  value        = var.lab_secret
-  key_vault_id = azurerm_key_vault.lab.id
-  tags         = var.common_tags
+  name            = "Lab-Test-Secret"
+  value           = var.lab_secret
+  key_vault_id    = azurerm_key_vault.lab.id
+  content_type    = "Lab application secret"
+  expiration_date = "2027-08-05T00:00:00Z"
+  tags            = var.common_tags
 }
