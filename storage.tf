@@ -1,6 +1,8 @@
 resource "azurerm_storage_account" "lab" {
   # checkov:skip=CKV2_AZURE_33:Private endpoints are outside the current lab scope; storage hardening is handled with TLS, disabled public blobs, disabled shared keys and SAS expiry.
-  name                     = "sttfsecuritymk26"
+  # checkov:skip=CKV_AZURE_206:LRS is intentionally used to keep this non-production lab low cost.
+  # checkov:skip=CKV_AZURE_59:Public network access remains enabled because private endpoints are outside this lab scope.
+  # checkov:skip=CKV_AZURE_33:Queue service logging is outside scope because this lab does not use Azure Queue Storage. name                     = "sttfsecuritymk26"
   resource_group_name      = azurerm_resource_group.lab.name
   location                 = azurerm_resource_group.lab.location
   account_tier             = "Standard"
