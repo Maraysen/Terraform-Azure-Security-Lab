@@ -15,10 +15,7 @@ resource "azurerm_storage_account" "lab" {
     expiration_period = "1.00:00:00"
     expiration_action = "Log"
   }
-  sas_policy {
-    expiration_period = "1.00:00:00"
-    expiration_action = "Log"
-  }
+
 
   tags = var.common_tags
 }
@@ -42,10 +39,6 @@ resource "azurerm_storage_account" "backup" {
     expiration_action = "Log"
   }
 
-  sas_policy {
-    expiration_period = "1.00:00:00"
-    expiration_action = "Log"
-  }
 
   tags = var.common_tags
 }
