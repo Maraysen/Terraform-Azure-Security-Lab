@@ -7,5 +7,5 @@ resource "azurerm_role_assignment" "webapp_key_vault_secrets_user" {
 resource "azurerm_role_assignment" "current_user_secrets_officer" {
   scope                = azurerm_key_vault.lab.id
   role_definition_name = "Key Vault Secrets Officer"
-  principal_id         = data.azurerm_client_config.current.object_id
+  principal_id         = "fe193dee-1dbf-4026-b99d-3b4c16d5e307"
 }
