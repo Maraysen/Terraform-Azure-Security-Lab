@@ -10,9 +10,11 @@ resource "azurerm_storage_account" "lab" {
   min_tls_version                 = "TLS1_2"
   allow_nested_items_to_be_public = false
 
+  sas_policy {
+    expiration_period = "1.00:00:00"
+  }
+
   tags = var.common_tags
-
-
 }
 
 resource "azurerm_storage_account" "backup" {
@@ -27,6 +29,10 @@ resource "azurerm_storage_account" "backup" {
   min_tls_version                 = "TLS1_2"
   https_traffic_only_enabled      = true
   allow_nested_items_to_be_public = false
+
+  sas_policy {
+    expiration_period = "1.00:00:00"
+  }
 
   tags = var.common_tags
 }
