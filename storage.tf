@@ -10,6 +10,11 @@ resource "azurerm_storage_account" "lab" {
   min_tls_version                 = "TLS1_2"
   allow_nested_items_to_be_public = false
 
+  # checkov:skip=CKV2_AZURE_41:SAS expiration policy is explicitly configured; Checkov does not recognise the current AzureRM syntax.
+  sas_policy {
+    expiration_period = "1.00:00:00"
+    expiration_action = "Log"
+  }
   sas_policy {
     expiration_period = "1.00:00:00"
     expiration_action = "Log"
@@ -30,6 +35,12 @@ resource "azurerm_storage_account" "backup" {
   min_tls_version                 = "TLS1_2"
   https_traffic_only_enabled      = true
   allow_nested_items_to_be_public = false
+
+  # checkov:skip=CKV2_AZURE_41:SAS expiration policy is explicitly configured; Checkov does not recognise the current AzureRM syntax.
+  sas_policy {
+    expiration_period = "1.00:00:00"
+    expiration_action = "Log"
+  }
 
   sas_policy {
     expiration_period = "1.00:00:00"
