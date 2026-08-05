@@ -14,6 +14,8 @@ resource "azurerm_linux_web_app" "lab" {
   service_plan_id     = azurerm_service_plan.lab.id
   tags                = var.common_tags
 
+  https_only = true
+
   identity {
     type = "SystemAssigned"
   }
@@ -23,6 +25,8 @@ resource "azurerm_linux_web_app" "lab" {
   }
 
   site_config {
-    always_on = false
+    always_on     = false
+    ftps_state    = "Disabled"
+    http2_enabled = true
   }
 }
