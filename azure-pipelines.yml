@@ -90,6 +90,9 @@ stages:
       runOnce:
         deploy:
           steps:
+          - checkout: self
+            displayName: 'Checkout Terraform configuration'
+
           - task: TerraformInstaller@1
             displayName: 'Install Terraform'
             inputs:
