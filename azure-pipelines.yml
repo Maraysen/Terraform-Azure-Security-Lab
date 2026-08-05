@@ -57,3 +57,10 @@ steps:
       terraform plan -input=false -out=tfplan
   env:
     TF_VAR_lab_secret: 'TemporaryLabSecret123!'
+
+- task: PublishPipelineArtifact@1
+  displayName: 'Publish Terraform Plan'
+  inputs:
+    targetPath: '$(System.DefaultWorkingDirectory)/tfplan'
+    artifact: 'terraform-plan'
+    publishLocation: 'pipeline'
