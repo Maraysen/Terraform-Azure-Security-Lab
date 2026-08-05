@@ -1,66 +1,74 @@
 trigger:
 - main
 
-pool:
-  vmImage: 'ubuntu-latest'
-
 variables:
   serviceConnection: 'sc-azure-security-lab'
 
-steps:
-- task: TerraformInstaller@1
-  displayName: 'Install Terraform'
-  inputs:
-    terraformVersion: '1.15.8'
-
-- script: terraform version
-  displayName: 'Check Terraform version'
-
-- script: terraform fmt -check -recursive
-  displayName: 'Check Terraform formatting'
-
-- task: AzureCLI@2
-  displayName: 'Terraform Init With Azure Authentication'
-  inputs:
-    azureSubscription: '$(serviceConnection)'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    addSpnToEnvironment: true
-    inlineScript: |
-      export ARM_CLIENT_ID="$servicePrincipalId"
-      export ARM_TENANT_ID="$tenantId"
-      export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
-      export ARM_OIDC_TOKEN="$idToken"
-      export ARM_USE_OIDC=true
-      export ARM_USE_AZUREAD=true
-
-      terraform init -reconfigure
-
-- script: terraform validate
-  displayName: 'Terraform Validate'
-
-- task: AzureCLI@2
+stages:
+- stage: Plan
   displayName: 'Terraform Plan'
-  inputs:
-    azureSubscription: '$(serviceConnection)'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    addSpnToEnvironment: true
-    inlineScript: |
-      export ARM_CLIENT_ID="$servicePrincipalId"
-      export ARM_TENANT_ID="$tenantId"
-      export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
-      export ARM_OIDC_TOKEN="$idToken"
-      export ARM_USE_OIDC=true
-      export ARM_USE_AZUREAD=true
 
-      terraform plan -input=false -out=tfplan
-  env:
-    TF_VAR_lab_secret: 'TemporaryLabSecret123!'
+  jobs:
+  - job: Plan
+    displayName: 'Plan'
 
-- task: PublishPipelineArtifact@1
-  displayName: 'Publish Terraform Plan'
-  inputs:
-    targetPath: '$(System.DefaultWorkingDirectory)/tfplan'
-    artifact: 'terraform-plan'
-    publishLocation: 'pipeline'
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    steps:
+    - task: TerraformInstaller@1
+      displayName: 'Install Terraform'
+      inputs:
+        terraformVersion: '1.15.8'
+
+    - script: terraform version
+      displayName: 'Check Terraform version'
+
+    - script: terraform fmt -check -recursive
+      displayName: 'Check Terraform formatting'
+
+    - task: AzureCLI@2
+      displayName: 'Terraform Init With Azure Authentication'
+      inputs:
+        azureSubscription: '$(serviceConnection)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        addSpnToEnvironment: true
+        inlineScript: |
+          export ARM_CLIENT_ID="$servicePrincipalId"
+          export ARM_TENANT_ID="$tenantId"
+          export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
+          export ARM_OIDC_TOKEN="$idToken"
+          export ARM_USE_OIDC=true
+          export ARM_USE_AZUREAD=true
+
+          terraform init -reconfigure
+
+    - script: terraform validate
+      displayName: 'Terraform Validate'
+
+    - task: AzureCLI@2
+      displayName: 'Terraform Plan'
+      inputs:
+        azureSubscription: '$(serviceConnection)'
+        scriptType: 'bash'
+        scriptLocation: 'inlineScript'
+        addSpnToEnvironment: true
+        inlineScript: |
+          export ARM_CLIENT_ID="$servicePrincipalId"
+          export ARM_TENANT_ID="$tenantId"
+          export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
+          export ARM_OIDC_TOKEN="$idToken"
+          export ARM_USE_OIDC=true
+          export ARM_USE_AZUREAD=true
+
+          terraform plan -input=false -out=tfplan
+      env:
+        TF_VAR_lab_secret: 'TemporaryLabSecret123!'
+
+    - task: PublishPipelineArtifact@1
+      displayName: 'Publish Terraform Plan'
+      inputs:
+        targetPath: '$(System.DefaultWorkingDirectory)/tfplan'
+        artifact: 'terraform-plan'
+        publishLocation: 'pipeline'
