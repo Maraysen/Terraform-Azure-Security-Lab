@@ -19,6 +19,12 @@ resource "azurerm_storage_account" "lab" {
   }
 
 
+  blob_properties {
+    delete_retention_policy {
+      days = 7
+    }
+  }
+
   tags = var.common_tags
 }
 
@@ -41,6 +47,12 @@ resource "azurerm_storage_account" "backup" {
   sas_policy {
     expiration_period = "1.00:00:00"
     expiration_action = "Log"
+  }
+
+  blob_properties {
+    delete_retention_policy {
+      days = 7
+    }
   }
 
 
