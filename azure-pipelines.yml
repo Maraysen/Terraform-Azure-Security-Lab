@@ -72,3 +72,51 @@ stages:
         targetPath: '$(System.DefaultWorkingDirectory)/tfplan'
         artifact: 'terraform-plan'
         publishLocation: 'pipeline'
+
+- stage: Apply
+  displayName: 'Terraform Apply'
+  dependsOn: Plan
+  condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+
+  jobs:
+  - deployment: Apply
+    displayName: 'Apply Saved Terraform Plan'
+    environment: 'terraform-production'
+
+    pool:
+      vmImage: 'ubuntu-latest'
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: TerraformInstaller@1
+            displayName: 'Install Terraform'
+            inputs:
+              terraformVersion: '1.15.8'
+
+          - task: DownloadPipelineArtifact@2
+            displayName: 'Download Terraform Plan'
+            inputs:
+              artifact: 'terraform-plan'
+              path: '$(Pipeline.Workspace)/terraform-plan'
+
+          - task: AzureCLI@2
+            displayName: 'Terraform Init and Apply'
+            inputs:
+              azureSubscription: '$(serviceConnection)'
+              scriptType: 'bash'
+              scriptLocation: 'inlineScript'
+              addSpnToEnvironment: true
+              inlineScript: |
+                export ARM_CLIENT_ID="$servicePrincipalId"
+                export ARM_TENANT_ID="$tenantId"
+                export ARM_SUBSCRIPTION_ID="$(az account show --query id -o tsv)"
+                export ARM_OIDC_TOKEN="$idToken"
+                export ARM_USE_OIDC=true
+                export ARM_USE_AZUREAD=true
+
+                terraform init -reconfigure
+                terraform apply -input=false "$(Pipeline.Workspace)/terraform-plan/tfplan"
+            env:
+              TF_VAR_lab_secret: 'TemporaryLabSecret123!'
