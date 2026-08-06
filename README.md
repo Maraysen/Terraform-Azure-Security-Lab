@@ -16,7 +16,6 @@ It focuses on:
 * Azure Policy enforcement
 * Remote Terraform state
 * Terraform modules
-* Resource imports
 * Lifecycle protection
 * Conditional resource deployment
 * Safe Terraform state operations
@@ -159,7 +158,6 @@ RequestDisallowedByPolicy
 * Remote Terraform state
 * Azure Blob state locking
 * Reusable modules
-* Terraform import
 * Terraform state movement
 * Lifecycle rules
 
@@ -211,14 +209,6 @@ terraform state mv
 ```
 
 This allowed the resources to move into the module without being destroyed or recreated.
-
-## Terraform Import
-
-A Resource Group created outside Terraform was imported into Terraform state.
-
-Terraform import demonstrated how Terraform can take ownership of an existing Azure resource without recreating it.
-
-After importing the resource, the Terraform configuration was updated to match the existing Azure resource.
 
 ## Lifecycle Protection
 
@@ -367,7 +357,6 @@ The following controls and Terraform operations were tested:
 * App Service HTTP requests appeared in Log Analytics
 * Key Vault diagnostics were sent to Log Analytics
 * A West US resource deployment was denied by Azure Policy
-* Existing Azure resources were imported into Terraform state
 * Networking resources were moved into a reusable module without recreation
 * The optional backup Storage Account was tested using a conditional variable
 * The Key Vault was protected with `prevent_destroy`
@@ -382,7 +371,6 @@ The following controls and Terraform operations were tested:
 .
 ├── backend.tf
 ├── diagnostics.tf
-├── import-demo.tf
 ├── keyvault.tf
 ├── monitoring.tf
 ├── network-module.tf
@@ -440,7 +428,6 @@ Phase 3 includes:
 * Security controls
 * Remote state
 * Modules
-* Imports
 * State movement
 * Conditional resources
 * Lifecycle rules
