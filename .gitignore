@@ -4,3 +4,4 @@
 crash.log
 *.tfplan
 *.tfvars
+!environments/*.tfvars
