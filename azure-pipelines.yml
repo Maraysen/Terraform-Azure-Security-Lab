@@ -3,8 +3,18 @@ trigger:
 
 variables:
 - group: terraform-secrets
+
 - name: serviceConnection
   value: 'sc-azure-security-lab'
+
+- name: terraformVersion
+  value: '1.15.8'
+
+- name: environmentFile
+  value: 'environments/prod.tfvars'
+
+- name: planArtifact
+  value: 'terraform-plan'
 
 stages:
 - stage: Plan
@@ -21,7 +31,7 @@ stages:
     - task: TerraformInstaller@1
       displayName: 'Install Terraform'
       inputs:
-        terraformVersion: '1.15.8'
+        terraformVersion: '$(terraformVersion)'
 
     - script: terraform version
       displayName: 'Check Terraform version'
@@ -72,7 +82,7 @@ stages:
           export ARM_USE_OIDC=true
           export ARM_USE_AZUREAD=true
 
-          terraform plan -input=false -var-file="environments/prod.tfvars" -out=tfplan
+          terraform plan -input=false -var-file="$(environmentFile)" -out=tfplan
       env:
         TF_VAR_lab_secret: '$(lab_secret)'
 
@@ -80,7 +90,7 @@ stages:
       displayName: 'Publish Terraform Plan'
       inputs:
         targetPath: '$(System.DefaultWorkingDirectory)/tfplan'
-        artifact: 'terraform-plan'
+        artifact: '$(planArtifact)'
         publishLocation: 'pipeline'
 
 - stage: Apply
@@ -106,13 +116,13 @@ stages:
           - task: TerraformInstaller@1
             displayName: 'Install Terraform'
             inputs:
-              terraformVersion: '1.15.8'
+              terraformVersion: '$(terraformVersion)'
 
           - task: DownloadPipelineArtifact@2
             displayName: 'Download Terraform Plan'
             inputs:
-              artifact: 'terraform-plan'
-              path: '$(Pipeline.Workspace)/terraform-plan'
+              artifact: '$(planArtifact)'
+              path: '$(Pipeline.Workspace)/$(planArtifact)'
 
           - task: AzureCLI@2
             displayName: 'Terraform Init and Apply'
@@ -130,6 +140,7 @@ stages:
                 export ARM_USE_AZUREAD=true
 
                 terraform init -reconfigure
-                terraform apply -input=false "$(Pipeline.Workspace)/terraform-plan/tfplan"
+                terraform apply -input=false "$(Pipeline.Workspace)/$(planArtifact)/tfplan"
             env:
               TF_VAR_lab_secret: '$(lab_secret)'
+              
