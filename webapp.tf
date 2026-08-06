@@ -33,7 +33,7 @@ resource "azurerm_linux_web_app" "lab" {
   }
 
   app_settings = {
-    LabSecret = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.lab.id})"
+    LabSecret = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.lab.versionless_id})"
   }
 
   site_config {
